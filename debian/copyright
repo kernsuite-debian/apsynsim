@@ -1,0 +1,136 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: apsynsim
+Source: <url://example.com>
+#
+# Please double check copyright with the licensecheck(1) command.
+
+Files:     APSYNSIM_EXERCISES.pdf
+           ARRAYS/ACA.array
+           ARRAYS/ALMA-ACA-Cycle1-Conf5.array
+           ARRAYS/CARMA-A.array
+           ARRAYS/CARMA-E.array
+           ARRAYS/Default.array
+           ARRAYS/E-W.array
+           ARRAYS/Golay_12.array
+           ARRAYS/Golomb_16.array
+           ARRAYS/Long_Golay_12.array
+           ARRAYS/PdBI-A.array
+           ARRAYS/PdBI-B.array
+           ARRAYS/PdBI-C.array
+           ARRAYS/PdBI-D.array
+           ARRAYS/Two-antennas.array
+           ARRAYS/Two-antennas_Long.array
+           ARRAYS/VLA-A.array
+           ARRAYS/VLA-B.array
+           ARRAYS/VLA-C.array
+           ARRAYS/VLA-D.array
+           ARRAYS/WSRT.array
+           ARRAYS/pseudo-VLA.array
+           COMPILE/APSYNSIM_icon.png
+           COMPILE/APSYNSIM_icon_small.ico
+           COMPILE/compile.txt
+           PICTURES/Camp_Alfarrasi.jpg
+           PICTURES/Crab.png
+           PICTURES/Credits.txt
+           PICTURES/Lena.png
+           PICTURES/M100-v2.png
+           PICTURES/M100.png
+           PICTURES/Orion.png
+           PICTURES/cyga_21cm.png
+           README
+           SCRIPT/APSYNSIM.config
+           SCRIPT/APSYNSIM.pyc
+           SCRIPT/APSYNSIM.spec
+           SCRIPT/APSYNSIM_MAC.spec
+           SOURCE_MODELS/Campanar.model
+           SOURCE_MODELS/Cloud.model
+           SOURCE_MODELS/Default.model
+           SOURCE_MODELS/Discs.model
+           SOURCE_MODELS/Double-source-small.model
+           SOURCE_MODELS/Double-source.model
+           SOURCE_MODELS/Faceon-Galaxy.model
+           SOURCE_MODELS/Five-Gauss.model
+           SOURCE_MODELS/Gauss-and-bigdisc-ALMA.model
+           SOURCE_MODELS/Gauss-and-bigdisc.model
+           SOURCE_MODELS/Lena.model
+           SOURCE_MODELS/Nebula.model
+           SOURCE_MODELS/Nebula_small.model
+           SOURCE_MODELS/One-Disc.model
+           SOURCE_MODELS/Point-and-Gauss-ALMA.model
+           SOURCE_MODELS/Point-source.model
+           SOURCE_MODELS/Point-source2.model
+           SOURCE_MODELS/RadioGalaxy.model
+Copyright: __NO_COPYRIGHT_NOR_LICENSE__
+License:   __NO_COPYRIGHT_NOR_LICENSE__
+
+Files:     SCRIPT/APSYNSIM.py
+Copyright: 2014 Ivan Marti-Vidal (Nordic ARC Node, OSO, Sweden)
+License:   GPL-3.0+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ .
+ import Tkinter
+ .
+ On Debian systems, the complete text of the GNU General Public License
+ Version 3 can be found in `/usr/share/common-licenses/GPL-3'.
+
+#----------------------------------------------------------------------------
+# Files marked as NO_LICENSE_TEXT_FOUND may be covered by the following
+# license/copyright files.
+
+#----------------------------------------------------------------------------
+# License file: LICENSE
+ #############################################################################
+ #
+ #    APSYNSIM: A real-time Aperture Synthesis Simulator
+ #
+ #    Copyright (C) 2014  Ivan Marti-Vidal (Nordic ARC Node, OSO, Sweden)
+ #
+ #    This program is free software: you can redistribute it and/or modify
+ #    it under the terms of the GNU General Public License as published by
+ #    the Free Software Foundation, either version 3 of the License, or
+ #    (at your option) any later version.
+ #
+ #    This program is distributed in the hope that it will be useful,
+ #    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ #    GNU General Public License for more details.
+ #
+ #    You should have received a copy of the GNU General Public License
+ #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ #
+ #############################################################################
+ .
+ .
+ # THIS SOFTWARE USES STANDARD PYTHON LIBRARIES PLUS THE FOLLOWING
+ # EXTENSION MODULES: MATPLOTLIB, TKINTER, AND NUMPY/SCIPY
+ .
+ .
+ # MATPLOTLIB LICENSE: http://matplotlib.org/users/license.html
+ .
+ .
+ .
+ # TKINTER INFORMATION: https://wiki.python.org/moin/TkInter
+ .
+ .
+ #############################
+ # NUMPY/SCIPY LICENSE: https://github.com/scipy/scipy/blob/master/LICENSE.txt
+ .
+ # Copyright (c) 2001, 2002 Enthought, Inc.
+ # All rights reserved.
+ .
+ # Copyright (c) 2003-2016 SciPy Developers.
+ # All rights reserved.
+ #############################
+ .
+ .

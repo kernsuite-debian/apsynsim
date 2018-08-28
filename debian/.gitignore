@@ -1,0 +1,5 @@
+.debhelper/
+apsynsim.debhelper.log
+apsynsim.substvars
+apsynsim/
+files

@@ -1,0 +1,13 @@
+Source: apsynsim
+Section: python
+Priority: optional
+Maintainer: KERN packaging <packaging@kernsuite.info>
+Build-Depends: debhelper (>=9)
+Standards-Version: 3.9.8
+Homepage: https://launchpad.net/apsynsim
+
+Package: apsynsim
+Architecture: any
+Multi-Arch: foreign
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Aperture Synthesis Simulator for Radio Astronomy

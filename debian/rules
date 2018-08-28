@@ -1,0 +1,8 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_fixperms:
+	dh_fixperms
+	chmod 755 debian/apsynsim/usr/share/apsynsim/SCRIPT/APSYNSIM.py
