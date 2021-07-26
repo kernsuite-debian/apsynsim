@@ -1,2 +1,4 @@
 version=4
-https://launchpad.net/apsynsim/+download http://launchpad.net/apsynsim/.*/APSYNSIM-(.+)_SOURCE.tar.gz
+opts=pgpsigurlmangle=s/$/.asc/ \
+  https://launchpad.net/apsynsim/ \
+  http://launchpad.net/.*download/apsysim-([.\d]+)\.tar\.gz
