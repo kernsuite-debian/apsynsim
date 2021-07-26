@@ -48,7 +48,7 @@ import os
 import time
 import sys
 
-__version__ = '1.4-b'
+__version__ = '2.0b'
 
 
 
@@ -263,6 +263,7 @@ class Interferometer(object):
     self.datadir = os.path.join(d1,'..','PICTURES')
     self.arraydir  = os.path.join(d1,'..','ARRAYS')
     self.modeldir  = os.path.join(d1,'..','SOURCE_MODELS')
+    self.userdir  = os.path.join(d1,'..','SAVED_IMAGES')
 
  # Try to read a default initial array:
     if len(antenna_file)==0:
@@ -328,7 +329,7 @@ class Interferometer(object):
 
 
     self.antPlot = self.figUV.add_subplot(231,aspect='equal')
-    self.UVPlot = self.figUV.add_subplot(232,aspect='equal',axisbg=(0.4,0.4,0.4))
+    self.UVPlot = self.figUV.add_subplot(232,aspect='equal',facecolor=(0.4,0.4,0.4))
     self.beamPlot = self.figUV.add_subplot(233,aspect='equal')
     self.modelPlot = self.figUV.add_subplot(235,aspect='equal')
     self.dirtyPlot = self.figUV.add_subplot(236,aspect='equal')
@@ -386,10 +387,11 @@ class Interferometer(object):
     self.wax['save'] =  pl.axes([0.07,0.08,0.08,0.05]) 
     self.wax['loadarr']=pl.axes([0.155,0.08,0.08,0.05])
     self.wax['quit']=pl.axes([0.155,0.02,0.08,0.05])
+    self.wax['fits']=pl.axes([0.07,0.02,0.08,0.05])
     self.wax['loadmod']=pl.axes([0.24,0.08,0.08,0.05])
-    self.wax['gammacorr']=pl.axes([0.46,0.08,0.13,0.02],axisbg='white')
-    self.wax['diameter']=pl.axes([0.825,0.08,0.10,0.02],axisbg='white')
-    self.wax['subarrwgt']=pl.axes([0.15,0.58,0.12,0.02],axisbg='white')
+    self.wax['gammacorr']=pl.axes([0.46,0.08,0.13,0.02],facecolor='white')
+    self.wax['diameter']=pl.axes([0.825,0.08,0.10,0.02],facecolor='white')
+    self.wax['subarrwgt']=pl.axes([0.15,0.58,0.12,0.02],facecolor='white')
     self.widget['robust'] = Slider(self.wax['robust'],r'Robust',-2.,2.,valinit=0.0)
     self.widget['lat'] = Slider(self.wax['lat'],r'Lat (deg)',-90.,90.,valinit=self.lat/self.deg2rad)
     self.widget['dec'] = Slider(self.wax['dec'],r'Dec (deg)',-90.,90.,valinit=self.dec/self.deg2rad)
@@ -403,6 +405,7 @@ class Interferometer(object):
     self.widget['loadarr'] = Button(self.wax['loadarr'],'Load array')
     self.widget['loadmod'] = Button(self.wax['loadmod'],'Load model')
     self.widget['quit'] = Button(self.wax['quit'],'Quit')
+    self.widget['fits'] = Button(self.wax['fits'],'Save Images')
     self.widget['gammacorr'] = Slider(self.wax['gammacorr'],'gamma',0.1,1.0,valinit=self.gamma,color='red')
     self.widget['gammacorr'].label.set_color('white')
     self.widget['gammacorr'].valtext.set_color('white')
@@ -426,6 +429,8 @@ class Interferometer(object):
     self.widget['loadmod'].on_clicked(self.loadModel)
     self.widget['gammacorr'].on_changed(self._gammacorr)
     self.widget['quit'].on_clicked(self.quit)
+    self.widget['fits'].on_clicked(self.saveFITS)
+
     self.widget['reduce'].on_clicked(self._reduce)
     self.widget['subarrwgt'].on_changed(self._subarrwgt)
     self.widget['diameter'].on_changed(self._setDiameter)
@@ -460,6 +465,137 @@ class Interferometer(object):
     if self.tks is not None:
       self.myCLEAN = CLEANer(self)
    
+
+
+  def saveFITS(self,event):
+
+    # Save the Dirty Beam
+    try:
+      import pyfits as pf
+      import time as dt
+    except:
+      self.showError("\n\nPyFITS not installed (or found)!\n\n")
+      return
+
+    Np4 = self.Npix/4
+    dx = self.imsize/self.Npix/3600.
+    dec = self.dec/self.deg2rad
+    nu = 3.e5/self.wavelength[2]
+    Now = dt.strftime('%Y-%m-%dT%H:%M:%S.000000',dt.gmtime())
+    ObsDate = dt.strftime('%Y-%m-%dT00:00:00.000000',dt.gmtime())
+    FileName = str(int(dt.time()))
+    def fillHeader(head,targname):
+      head['BSCALE'] = 1.0
+      head['BZERO'] = 0.0
+      head['BTYPE'] = 'Intensity'
+      head['BUNIT'] = 'Jy/beam'
+      head['OBJECT'] = targname
+      head['EQUINOX'] = 2000.0
+      head['CTYPE1'] = 'RA---SIN'
+      head['CRVAL1'] = 0.0
+      head['CDELT1'] = -dx
+      head['CRPIX1'] = Np4
+      head['CUNIT1'] = 'deg'
+      head['CTYPE2'] = 'DEC--SIN'
+      head['CRVAL2'] = dec
+      head['CDELT2'] = dx
+      head['CRPIX2'] = Np4
+      head['CUNIT2'] = 'deg'
+      head['CTYPE3'] = 'FREQ'
+      head['CRVAL3'] = nu
+      head['CDELT3'] = nu/100.
+      head['CRPIX3'] = 1
+      head['CUNIT3'] = 'Hz'
+      head['CTYPE4'] = 'STOKES'
+      head['CRVAL4'] = 1.
+      head['CDELT4'] = 1.
+      head['CRPIX4'] = 1.
+      head['CUNIT4'] = '  '
+      head['RESTFRQ'] = nu
+      head['SPECSYS'] = 'LSRK'
+      head['VELREF'] = 257
+      head['TELESCOP'] = 'APSYNSIM'
+      head['OBSERVER'] = str(__version__)
+      head['DATE-OBS'] = ObsDate
+      head['TIMESYS'] = 'UTC'
+      head['OBSRA']   =   0.0                                                  
+      head['OBSDEC']  =  dec                                                  
+      head['OBSGEO-X'] =   0.0                                                  
+      head['OBSGEO-Y'] = 6.5e6*np.cos(self.lat)                                                 
+      head['OBSGEO-Z'] = 6.5e6*np.sin(self.lat)                                 
+      head['DATE']     = Now              
+      head['ORIGIN']  = 'OSO-APSYNSIM'       
+
+
+    if not os.path.exists(self.userdir):
+      os.makedirs(self.userdir)
+
+# Save Dirty Beam:
+    hdu = pf.PrimaryHDU(np.copy(self.beam[self.Npix-Np4:Np4:-1,Np4:self.Npix-Np4,np.newaxis,np.newaxis]).transpose(2,3,0,1))
+    hdulist = pf.HDUList([hdu])
+    head = hdulist[0].header
+    SaveTo = os.path.join(self.userdir,'PSF_%s.fits'%FileName)
+    fillHeader(head,'DIRTY_BEAM')
+    if os.path.exists(SaveTo):
+      os.remove(SaveTo)
+    hdulist.writeto(SaveTo)
+
+# Save Dirty Image:
+    hdu = pf.PrimaryHDU(np.copy(self.dirtymap[self.Npix-Np4:Np4:-1,Np4:self.Npix-Np4,np.newaxis,np.newaxis]).transpose(2,3,0,1))
+
+    hdulist = pf.HDUList([hdu])
+    head = hdulist[0].header
+    SaveTo = os.path.join(self.userdir,'DIRTY_IMAGE_%s.fits'%FileName)
+    fillHeader(head,'DIRTY_IMAGE')
+    if os.path.exists(SaveTo):
+      os.remove(SaveTo)
+    hdulist.writeto(SaveTo)
+
+# Save Model Image:
+    hdu = pf.PrimaryHDU(np.copy(self.modelimTrue[self.Npix-Np4:Np4:-1,Np4:self.Npix-Np4,np.newaxis,np.newaxis]).transpose(2,3,0,1))
+    hdulist = pf.HDUList([hdu])
+    head = hdulist[0].header
+    SaveTo = os.path.join(self.userdir,'TRUE_SOURCE_%s.fits'%FileName)
+    fillHeader(head,'TRUE_SOURCE')
+    if os.path.exists(SaveTo):
+      os.remove(SaveTo)
+    hdulist.writeto(SaveTo)
+
+
+# Save CLEAN:
+    if self.myCLEAN is not None:
+      hdu = pf.PrimaryHDU(np.copy(self.myCLEAN.residuals[self.Npix-Np4:Np4:-1,Np4:self.Npix-Np4,np.newaxis,np.newaxis]).transpose(2,3,0,1))
+      hdulist = pf.HDUList([hdu])
+      SaveTo = os.path.join(self.userdir,'CLEAN_RESIDUALS_%s.fits'%FileName)
+      head = hdulist[0].header
+      fillHeader(head,'CLN_RES')
+      if os.path.exists(SaveTo):
+        os.remove(SaveTo)
+      hdulist.writeto(SaveTo)
+
+      hdu = pf.PrimaryHDU(np.copy(self.myCLEAN.cleanmod[self.Npix-Np4:Np4:-1,Np4:self.Npix-Np4,np.newaxis,np.newaxis]).transpose(2,3,0,1))
+      hdulist = pf.HDUList([hdu])
+      SaveTo = os.path.join(self.userdir,'CLEAN_IMAGE_%s.fits'%FileName)
+      head = hdulist[0].header
+      fillHeader(head,'CLN_IMG')
+      if os.path.exists(SaveTo):
+        os.remove(SaveTo)
+      hdulist.writeto(SaveTo)
+
+      hdu = pf.PrimaryHDU(np.copy(self.myCLEAN.cleanmodd[self.Npix-Np4:Np4:-1,Np4:self.Npix-Np4,np.newaxis,np.newaxis]).transpose(2,3,0,1))
+      hdulist = pf.HDUList([hdu])
+      SaveTo = os.path.join(self.userdir,'CLEAN_MODEL_%s.fits'%FileName)
+      head = hdulist[0].header
+      fillHeader(head,'CLN_MOD')
+      if os.path.exists(SaveTo):
+        os.remove(SaveTo)
+      hdulist.writeto(SaveTo)
+
+
+    showinfo('INFO','\n\nFITS images saved succesfully!\n\n')
+
+
+
 
   def readAntennas(self,antenna_file):
     
@@ -1213,8 +1349,8 @@ class Interferometer(object):
     self.antText = self.antPlot.text(0.05,0.88,self.fmtA%(self.Nant+self.Nant2),transform=self.antPlot.transAxes)
     self.UVPlotPlot = []
     toplotu = self.u.flatten()/self.lfac ;  toplotv = self.v.flatten()/self.lfac ; 
-    self.UVPlotPlot.append(self.UVPlot.plot(toplotu, toplotv,'.',color='lime',markersize=1,picker=2)[0])
-    self.UVPlotPlot.append(self.UVPlot.plot(-toplotu,-toplotv,'.',color='lime',markersize=1,picker=2)[0])
+    self.UVPlotPlot.append(self.UVPlot.plot(toplotu, toplotv,'.',color='lime',markeredgecolor='lime',markersize=1,picker=2)[0])
+    self.UVPlotPlot.append(self.UVPlot.plot(-toplotu,-toplotv,'.',color='lime',markeredgecolor='lime',markersize=1,picker=2)[0])
     if self.Nant2>1:
       self.UVPlotPlot2 = []
       toplotu = self.u2.flatten()/self.lfac ;  toplotv = self.v2.flatten()/self.lfac ; 
@@ -2221,8 +2357,8 @@ class CLEANer(object):
       Dec = event.ydata
       y1 = np.floor((self.Xaxmax-RA)/(2.*self.Xaxmax)*self.parent.Npix)
       x1 = np.floor((self.Xaxmax-Dec)/(2.*self.Xaxmax)*self.parent.Npix)
-      xi,xf = [min(self.xy0[0],x1),max(self.xy0[0],x1)]
-      yi,yf = [min(self.xy0[1],y1),max(self.xy0[1],y1)]
+      xi,xf = map(int,[min(self.xy0[0],x1),max(self.xy0[0],x1)])
+      yi,yf = map(int,[min(self.xy0[1],y1),max(self.xy0[1],y1)])
       if self.pressed==1:
         self.mask[xi:xf,yi:yf] = 1.0
         self.bmask[xi:xf,yi:yf] = True

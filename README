@@ -27,6 +27,14 @@ If you work on Linux, open a terminal, go to the the directory
 called SCRIPT (or SOURCE_CODE), and run the command "python APSYNSIM.py".
 
 
+NOTE: You may need to install some dependencies if you are not running
+the binary. All dependencies so far are:
+
+python-numpy
+python-scipy
+python-matplotlib
+python-tk
+
 
 ##########
 # USAGE: #

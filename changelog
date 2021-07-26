@@ -1,3 +1,15 @@
+v 2.0b - DEC 2020.
+
+- Added a new program (APSYNTRU) which handles REAL data. Deconvolution can be done with CLEAN or MEM.
+
+- Added a sample of real observations. 
+
+
+
+v 1.5 - MAY 2017.
+
+- Simulated images can be saved to FITS format.
+
 v 1.4 - SEPT 2016.
 
 - Random noise can be added to the visibilities.
