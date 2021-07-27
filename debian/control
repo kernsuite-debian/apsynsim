@@ -2,9 +2,15 @@ Source: apsynsim
 Section: python
 Priority: optional
 Maintainer: KERN packaging <packaging@kernsuite.info>
-Build-Depends: debhelper (>=11)
+Build-Depends: debhelper (>=11),
+               dh-python,
+               python3-numpy,
+               python3-scipy,
+               python3-matplotlib,
+               python3-tk
 Standards-Version: 4.5.0
 Homepage: https://launchpad.net/apsynsim
+XS-Python3-Version: 3.8
 
 Package: apsynsim
 Architecture: any

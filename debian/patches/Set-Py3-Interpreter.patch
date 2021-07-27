@@ -1,0 +1,18 @@
+Index: apsynsim/SCRIPT/APSYNSIM_Python3.py
+===================================================================
+--- apsynsim.orig/SCRIPT/APSYNSIM_Python3.py
++++ apsynsim/SCRIPT/APSYNSIM_Python3.py
+@@ -1,3 +1,4 @@
++#!/usr/bin/python3
+ #############################################################################
+ #
+ #    APSYNSIM: A real-time Aperture Synthesis Simulator
+@@ -340,7 +341,7 @@ class Interferometer(object):
+     self.modelPlot = self.figUV.add_subplot(235,aspect='equal')
+     self.dirtyPlot = self.figUV.add_subplot(236,aspect='equal')
+ 
+-    self.spherePlot = pl.axes([0.53,0.82,0.12,0.12],projection='3d',aspect='equal')
++    self.spherePlot = pl.axes([0.53,0.82,0.12,0.12],projection='3d')
+ 
+     u = np.linspace(0, 2 * np.pi, 100)
+     v = np.linspace(0, np.pi, 100)
