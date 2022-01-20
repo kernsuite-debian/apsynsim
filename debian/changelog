@@ -1,3 +1,10 @@
+apsynsim (2.0b-1kern2) focal; urgency=medium
+
+  [ Athanaseus Javas Ramaila ]
+  * Add python3 patch
+
+ -- KERN packaging <packaging@kernsuite.info>  Thu, 20 Jan 2022 13:36:42 +0000
+
 apsynsim (2.0b-1kern1) focal; urgency=medium
 
   [ Athanaseus Javas Ramaila ]

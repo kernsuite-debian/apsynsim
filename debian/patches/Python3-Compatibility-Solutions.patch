@@ -1,0 +1,24 @@
+Index: apsynsim/SCRIPT/APSYNSIM_Python3.py
+===================================================================
+--- apsynsim.orig/SCRIPT/APSYNSIM_Python3.py
++++ apsynsim/SCRIPT/APSYNSIM_Python3.py
+@@ -2059,8 +2059,8 @@ class CLEANer(object):
+ 
+     self.ResidPlot = self.figCL1.add_subplot(121,aspect='equal') #pl.axes([0.01,0.43,0.5,0.5],aspect='equal')
+     self.CLEANPlot = self.figCL1.add_subplot(122,aspect='equal',sharex=self.ResidPlot,sharey=self.ResidPlot) #pl.axes([0.55,0.43,0.5,0.5],aspect='equal')
+-    self.ResidPlot.set_adjustable('box-forced')
+-    self.CLEANPlot.set_adjustable('box-forced')
++    self.ResidPlot.set_adjustable('box')
++    self.CLEANPlot.set_adjustable('box')
+ 
+     self.frames = {}
+     self.frames['FigFr'] = Tk.Frame(self.me)
+@@ -2069,7 +2069,7 @@ class CLEANer(object):
+     self.canvas1 = FigureCanvasTkAgg(self.figCL1, master=self.frames['FigFr'])
+   #  self.canvas2 = FigureCanvasTkAgg(self.figCL2, master=self.frames['FigFr'])
+ 
+-    self.canvas1.show()
++    self.canvas1.draw()
+   #  self.canvas2.show()
+ 
+     self.frames['FigFr'].pack(side=Tk.TOP)

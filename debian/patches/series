@@ -1,3 +1,4 @@
 # You must remove unused comment lines for the released package.
 Set-Py3-Interpreter.patch
-End-Of-File-Char3.patch
+Python3-Compatibility-Solutions.patch
+End-of-file-char.patch

@@ -15,5 +15,6 @@ XS-Python3-Version: 3.8
 Package: apsynsim
 Architecture: any
 Multi-Arch: foreign
-Depends: ${misc:Depends}, ${shlibs:Depends}, ${python3:Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}, ${python3:Depends},
+         python3-matplotlib, python3-tk, python3-scipy, python3-numpy
 Description: Aperture Synthesis Simulator for Radio Astronomy
