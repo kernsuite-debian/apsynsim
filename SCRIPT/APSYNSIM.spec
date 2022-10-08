@@ -3,8 +3,8 @@
 # SPEC FILE FOR PYINSTALLER:
 
 a = Analysis(['z:\\APSYNSIM\\SCRIPT\\APSYNSIM.py'],
-             pathex=['Z:\\APSINSYM_WIN32'],
-             hiddenimports=['scipy.special._ufuncs_cxx','mpl_toolkits','mpl_toolkits.mplot3d'],
+             pathex=['Z:\\APSINSYM_WIN'],
+             hiddenimports=['scipy.special._ufuncs_cxx','mpl_toolkits'],
              hookspath=None,
              runtime_hooks=None)
 pyz = PYZ(a.pure)
@@ -15,9 +15,8 @@ exe = EXE(pyz,
           debug=False,
           strip=None,
           upx=True,
-          console=True , icon='z:\\APSYNSIM\\COMPILE\\APSYNSIM_icon_small.ico')
+          console=True , icon='z:\\APSYNSIM\\COMPILE\\APSYNSIM.ico')
 
-import mpl_toolkits.mplot3d
 import os
 
 

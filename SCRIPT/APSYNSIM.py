@@ -20,7 +20,7 @@
 #############################################################################
 
 #import Tkinter
-import FileDialog
+#import FileDialog
 import matplotlib as mpl
 mpl.use('TkAgg')
 import numpy as np
@@ -31,24 +31,27 @@ from matplotlib.widgets import Slider, Button
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.cm as cm
 import matplotlib.image as plimg
-from ScrolledText import ScrolledText
+from tkinter.scrolledtext import ScrolledText
 
-
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 try:
-  import Tkinter as Tk
+  from matplotlib.backends.backend_tkagg import NavigationToolbar2TkAgg as NavigationToolbar2Tk
 except:
-  import tkinter as Tk
+  from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk 
+
+#from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+
+import tkinter as Tk
 
 
 from matplotlib.backend_bases import NavigationToolbar2
-import tkFileDialog
-from tkMessageBox import showinfo
+from tkinter import filedialog as tkFileDialog
+from tkinter.messagebox import showinfo
 import os
 import time
 import sys
 
-__version__ = '2.0b'
+__version__ = '2.2b'
 
 
 
@@ -233,7 +236,7 @@ class Interferometer(object):
 # Overwrite defaults from config file:
 #    d1 = os.path.dirname(os.path.realpath(__file__))
     d1 = os.path.dirname(os.path.realpath(sys.argv[0]))
-    print d1
+    print(d1)
 
 #   execfile(os.path.join(os.path.basename(d1),'APSYNSIM.config'))
     try:
@@ -309,7 +312,7 @@ class Interferometer(object):
 
     mpl.rcParams['toolbar'] = 'None'
 
-    self.Nphf = self.Npix/2
+    self.Nphf = self.Npix//2
     self.robfac = 0.0
     self.figUV = pl.figure(figsize=(15,8))
 
@@ -317,7 +320,7 @@ class Interferometer(object):
        self.canvas = self.figUV.canvas
     else:
       self.canvas = FigureCanvasTkAgg(self.figUV, master=self.tks)
-      self.canvas.show()
+      self.canvas.draw()
       menubar = Tk.Menu(self.tks)
       menubar.add_command(label="Help", command=self._getHelp)
       menubar.add_command(label="Quit", command=self.quit)
@@ -334,24 +337,24 @@ class Interferometer(object):
     self.modelPlot = self.figUV.add_subplot(235,aspect='equal')
     self.dirtyPlot = self.figUV.add_subplot(236,aspect='equal')
 
-    self.spherePlot = pl.axes([0.53,0.82,0.12,0.12],projection='3d',aspect='equal')
+  #  self.spherePlot = pl.axes([0.53,0.82,0.12,0.12],projection='3d',aspect='auto')
 
     u = np.linspace(0, 2 * np.pi, 100)
     v = np.linspace(0, np.pi, 100)
     x = 10 * np.outer(np.cos(u), np.sin(v))
     y = 10 * np.outer(np.sin(u), np.sin(v))
     z = 10 * np.outer(np.ones(np.size(u)), np.cos(v))
-    self.spherePlotPlot = self.spherePlot.plot_surface(x, y, z,  rstride=4, cstride=4, color=(0.8,0.8,1.0))
-    self.spherePlot._axis3don = False
-    self.spherePlot.patch.set_alpha(0.8)
+  #  self.spherePlotPlot = self.spherePlot.plot_surface(x, y, z,  rstride=4, cstride=4, color=(0.8,0.8,1.0))
+  #  self.spherePlot._axis3don = False
+  #  self.spherePlot.patch.set_alpha(0.8)
     beta = np.zeros(100)
     self.arrayPath = [np.zeros(self.nH), np.zeros(self.nH), np.zeros(self.nH)]
-    self.sphereArray = self.spherePlot.plot([],[],[],'y',linewidth=3)
-    self.spherePlot.set_xlim3d((-6,6))
-    self.spherePlot.set_ylim3d((-6,6))
-    self.spherePlot.set_zlim3d((-6,6))
-    self.spherePlot.patch.set_alpha(0.8)
-    self.spherePlot.elev = 45.
+  #  self.sphereArray = self.spherePlot.plot([],[],[],'y',linewidth=3)
+  #  self.spherePlot.set_xlim3d((-6,6))
+  #  self.spherePlot.set_ylim3d((-6,6))
+  #  self.spherePlot.set_zlim3d((-6,6))
+  #  self.spherePlot.patch.set_alpha(0.8)
+  #  self.spherePlot.elev = 45.
 
 
     self.figUV.subplots_adjust(left=0.05,right=0.99,top=0.95,bottom=0.07,hspace=0.25)
@@ -471,19 +474,19 @@ class Interferometer(object):
 
     # Save the Dirty Beam
     try:
-      import pyfits as pf
+      import astropy.io.fits as pf
       import time as dt
     except:
       self.showError("\n\nPyFITS not installed (or found)!\n\n")
       return
 
-    Np4 = self.Npix/4
+    Np4 = self.Npix//4
     dx = self.imsize/self.Npix/3600.
     dec = self.dec/self.deg2rad
     nu = 3.e5/self.wavelength[2]
     Now = dt.strftime('%Y-%m-%dT%H:%M:%S.000000',dt.gmtime())
     ObsDate = dt.strftime('%Y-%m-%dT00:00:00.000000',dt.gmtime())
-    FileName = str(int(dt.time()))
+    FileName = Now.replace(':','-')[:Now.find('.')]
     def fillHeader(head,targname):
       head['BSCALE'] = 1.0
       head['BZERO'] = 0.0
@@ -640,17 +643,17 @@ class Interferometer(object):
             self.wavelength = [float(it[1])*1.e-3,float(it[2])*1.e-3]
             self.wavelength.append((self.wavelength[0]+self.wavelength[1])/2.)
           elif it[0]=='ANTENNA':   
-            antPos.append(map(float,it[1:]))
+            antPos.append(list(map(float,it[1:])))
             Nant += 1
             antPos[-1][0] *= 1.e-3 ; antPos[-1][1] *= 1.e-3
             Xmax = np.max(np.abs(antPos[-1]+[Xmax]))
           elif it[0]=='ANTENNA2':   
-            antPos2.append(map(float,it[1:]))
+            antPos2.append(list(map(float,it[1:])))
             Nant2 += 1
             antPos2[-1][0] *= 1.e-3 ; antPos2[-1][1] *= 1.e-3
             Xmax = np.max(np.abs(antPos2[-1]+[Xmax]))
           elif it[0]=='DIAMETER':   
-            Diams = map(float,it[1:])
+            Diams = list(map(float,it[1:]))
             self.Diameters[0] = Diams[0]
             if len(Diams)>1:
               self.Diameters[1] = Diams[1]
@@ -744,7 +747,7 @@ class Interferometer(object):
           if it[0]=='IMAGE':
             imfiles.append([str(it[1]),float(it[2])])
           elif it[0] in ['G','D','P']:   
-            models.append([it[0]]+map(float,it[1:]))
+            models.append([it[0]]+list(map(float,it[1:])))
             if models[-1][0] != 'P':
               models[-1][4] = np.abs(models[-1][4])
               Xmax = np.max([np.abs(models[-1][1])+models[-1][4],
@@ -845,7 +848,8 @@ class Interferometer(object):
       self._plotAntennas(redo=True,rescale=True)
 
     newtext = self.fmtH%(self.lat/self.deg2rad,self.dec/self.deg2rad,self.Hcov[0]/self.Hfac,self.Hcov[1]/self.Hfac)
-    self.latText.set_text(newtext)
+    if hasattr(self,'latText'):
+      self.latText.set_text(newtext)
     self.Horig =  np.linspace(self.Hcov[0],self.Hcov[1],self.nH)
     H = self.Horig[np.newaxis,:]
     self.H = [np.sin(H),np.cos(H)] 
@@ -924,7 +928,7 @@ class Interferometer(object):
 
   def _prepareBaselines(self):
 
-    self.Nbas = self.Nant*(self.Nant-1)/2
+    self.Nbas = self.Nant*(self.Nant-1)//2
     NBmax = self.Nbas
     self.B = np.zeros((NBmax,self.nH),dtype=np.float32)
     self.basnum = np.zeros((self.Nant,self.Nant-1),dtype=np.int8)
@@ -954,11 +958,11 @@ class Interferometer(object):
     if self.Nant2 > 1:
       self.Nbas2 = self.Nant2*(self.Nant2-1)/2
       NBmax2 = self.Nbas2
-      self.B2 = np.zeros((NBmax2,self.nH),dtype=np.float32)
-      self.basnum2 = np.zeros((self.Nant2,self.Nant2-1),dtype=np.int8)
-      self.basidx2 = np.zeros((self.Nant2,self.Nant2),dtype=np.int8)
-      self.antnum2 = np.zeros((NBmax2,2),dtype=np.int8)
-      self.Gains2 = np.ones((self.Nbas2,self.nH),dtype=np.complex64)
+      self.B2 = np.zeros((int(NBmax2),int(self.nH)),dtype=np.float32)
+      self.basnum2 = np.zeros((int(self.Nant2),int(self.Nant2)-1),dtype=np.int8)
+      self.basidx2 = np.zeros((int(self.Nant2),int(self.Nant2)),dtype=np.int8)
+      self.antnum2 = np.zeros((int(NBmax2),2),dtype=np.int8)
+      self.Gains2 = np.ones((int(self.Nbas2),int(self.nH)),dtype=np.complex64)
       self.H = [np.sin(H),np.cos(H)]
 
       bi = 0
@@ -972,9 +976,9 @@ class Interferometer(object):
           nii[n1] += 1; nii[n2] += 1
           bi += 1
 
-      self.u2 = np.zeros((NBmax2,self.nH))
-      self.v2 = np.zeros((NBmax2,self.nH))
-      self.ravelDims2 = (NBmax2,self.nH)
+      self.u2 = np.zeros((int(NBmax2),self.nH))
+      self.v2 = np.zeros((int(NBmax2),self.nH))
+      self.ravelDims2 = (int(NBmax2),self.nH)
 
 
 
@@ -1001,7 +1005,7 @@ class Interferometer(object):
    if self.Nant2 > 1:
 
     if antidx==-1:
-      bas2change = range(self.Nbas2)
+      bas2change = range(int(self.Nbas2))
     elif antidx >= self.Nant:
       bas2change = self.basnum2[antidx-self.Nant].flatten()
     else:
@@ -1028,7 +1032,7 @@ class Interferometer(object):
      self.Gsampling[:] = 0.0
      self.noisemap[:] = 0.0
    elif antidx < self.Nant:
-     bas2change = map(int,list(self.basnum[antidx].flatten()))
+     bas2change = list(map(int,list(self.basnum[antidx].flatten())))
    else:
      bas2change = []
 
@@ -1044,8 +1048,8 @@ class Interferometer(object):
      mV = -pixV[goodpix] + self.Nphf
 
      if not antidx==-1:
-    #   print bas2change
-    #   print np.shape(goodpix), np.shape(self.Gains), np.shape(self.pixpos[nb][0]), nb
+    #   print(bas2change)
+    #   print(np.shape(goodpix), np.shape(self.Gains), np.shape(self.pixpos[nb][0]), nb)
        self.totsampling[self.pixpos[nb][1],self.pixpos[nb][2]] -= 1.0
        self.totsampling[self.pixpos[nb][3],self.pixpos[nb][0]] -= 1.0
        self.Gsampling[self.pixpos[nb][1],self.pixpos[nb][2]] -= self.Gains[nb,goodpix]
@@ -1069,12 +1073,12 @@ class Interferometer(object):
    if self.Nant2 > 1:
 
      if antidx==-1:
-       bas2change = range(self.Nbas2)
+       bas2change = range(int(self.Nbas2))
        self.pixpos2 = [[] for nb in bas2change]
        self.totsampling2[:] = 0.0
     #   self.Gsampling2[:] = 0.0
      elif antidx >= self.Nant:
-       bas2change = map(int,list(self.basnum2[antidx-self.Nant].flatten()))
+       bas2change = list(map(int,list(self.basnum2[antidx-self.Nant].flatten())))
      else:
        bas2change = []
 
@@ -1170,7 +1174,7 @@ class Interferometer(object):
           self.showError('File %s does NOT exist. Cannot read the model!'%imfile[0]) 
           return
 
-      Np4 = self.Npix/4
+      Np4 = self.Npix//4
       img = plimg.imread(imfile[0]).astype(np.float32)
       dims = np.shape(img)
       d3 = min(2,dims[2])
@@ -1179,16 +1183,16 @@ class Interferometer(object):
       avimg -= np.min(avimg)
       avimg *= imfile[1]/np.max(avimg)
       if d1 == self.Nphf:
-        sh0 = (self.Nphf-dims[0])/2
-        sh1 = (self.Nphf-dims[1])/2
+        sh0 = (self.Nphf-dims[0])//2
+        sh1 = (self.Nphf-dims[1])//2
         self.modelimTrue[sh0+Np4:sh0+Np4+dims[0], sh1+Np4:sh1+Np4+dims[1]] += zoomimg
       else:
         zoomimg = spndint.zoom(avimg,float(self.Nphf)/d1)
         zdims = np.shape(zoomimg)
         zd0 = min(zdims[0],self.Nphf)
         zd1 = min(zdims[1],self.Nphf)
-        sh0 = (self.Nphf-zdims[0])/2
-        sh1 = (self.Nphf-zdims[1])/2
+        sh0 = (self.Nphf-zdims[0])//2
+        sh1 = (self.Nphf-zdims[1])//2
         self.modelimTrue[sh0+Np4:sh0+Np4+zd0, sh1+Np4:sh1+Np4+zd1] += zoomimg[:zd0,:zd1]
 
 
@@ -1204,7 +1208,7 @@ class Interferometer(object):
 
     if self.Diameters[0]>0.0:
       PB = 2.*(1220.*180./np.pi*3600.*self.wavelength[2]/self.Diameters[0]/2.3548)**2.  # 2*sigma^2
-    #  print PB, np.max(self.distmat),self.wavelength
+    #  print(PB, np.max(self.distmat),self.wavelength)
       beamImg = np.exp(self.distmat/PB)
       self.modelim[0][:] = self.modelimTrue*beamImg
     else:
@@ -1228,7 +1232,7 @@ class Interferometer(object):
 
   def _plotModel(self,redo=True):
     
-    Np4 = self.Npix/4
+    Np4 = self.Npix//4
 
     if redo:
       self.modelPlot.cla()
@@ -1276,11 +1280,11 @@ class Interferometer(object):
 
 
   def _plotDirty(self,redo=True):
-    Np4 = self.Npix/4
+    Np4 = self.Npix//4
 
     self.dirtymap[:] = (np.fft.fftshift(np.fft.ifft2(np.fft.ifftshift(self.GrobustNoise)+self.modelfft*np.fft.ifftshift(self.Grobustsamp)))).real/(1.+self.W2W1)
 
-  #  print 'RMS: ',np.std(np.abs(self.dirtymap[:])),np.max(np.abs(self.GrobustNoise)),np.max(np.abs(self.totsampling))
+  #  print('RMS: ',np.std(np.abs(self.dirtymap[:])),np.max(np.abs(self.GrobustNoise)),np.max(np.abs(self.totsampling)))
 
     if self.Nant2 > 1:
       self.dirtymap[:] += (np.fft.fftshift(np.fft.ifft2(self.modelfft2*np.fft.ifftshift(self.robustsamp2)))).real*(self.W2W1/(1.+self.W2W1))
@@ -1288,7 +1292,7 @@ class Interferometer(object):
     else:
       self.dirtymap /= self.beamScale
 
-  #  print 'RMS2: ',np.std(np.abs(self.dirtymap[:]))  #, self.beamScale
+  #  print('RMS2: ',np.std(np.abs(self.dirtymap[:]))  #, self.beamScale)
 
     extr = [np.min(self.dirtymap),np.max(self.dirtymap)]
     if redo:
@@ -1335,10 +1339,13 @@ class Interferometer(object):
     else:
       pl.setp(self.wax['subarrwgt'],visible=False)
     self.antPlotBas = self.antPlot.plot([0],[0],'-b')[0]
-    self.antPlotPlot = self.antPlot.plot(toplot[:,0],toplot[:,1],'o',color='lime', picker=5)[0]
+    self.antPlotPlot = self.antPlot.plot(toplot[:,0],toplot[:,1],'o',color='lime', picker=True)[0]
+    self.antPlot.xaxis.set_pickradius(5.)
+    self.antPlot.yaxis.set_pickradius(5.)
+
     if self.Nant2>1:
       toplot2 = np.array(self.antPos2[:self.Nant2])
-      self.antPlotPlot2 = self.antPlot.plot(toplot2[:,0],toplot2[:,1],'or', picker=5)[0]
+      self.antPlotPlot2 = self.antPlot.plot(toplot2[:,0],toplot2[:,1],'or', picker=True)[0]
 
     self.antPlot.set_xlim((-self.Xmax,self.Xmax))
     self.antPlot.set_ylim((-self.Xmax,self.Xmax))
@@ -1349,13 +1356,17 @@ class Interferometer(object):
     self.antText = self.antPlot.text(0.05,0.88,self.fmtA%(self.Nant+self.Nant2),transform=self.antPlot.transAxes)
     self.UVPlotPlot = []
     toplotu = self.u.flatten()/self.lfac ;  toplotv = self.v.flatten()/self.lfac ; 
-    self.UVPlotPlot.append(self.UVPlot.plot(toplotu, toplotv,'.',color='lime',markeredgecolor='lime',markersize=1,picker=2)[0])
-    self.UVPlotPlot.append(self.UVPlot.plot(-toplotu,-toplotv,'.',color='lime',markeredgecolor='lime',markersize=1,picker=2)[0])
+    self.UVPlotPlot.append(self.UVPlot.plot(toplotu, toplotv,'.',color='lime',markersize=1,picker=True)[0])
+    self.UVPlotPlot.append(self.UVPlot.plot(-toplotu,-toplotv,'.',color='lime',markersize=1,picker=True)[0])
     if self.Nant2>1:
       self.UVPlotPlot2 = []
       toplotu = self.u2.flatten()/self.lfac ;  toplotv = self.v2.flatten()/self.lfac ; 
-      self.UVPlotPlot2.append(self.UVPlot.plot(toplotu, toplotv,'.r',markersize=1,picker=2)[0])
-      self.UVPlotPlot2.append(self.UVPlot.plot(-toplotu,-toplotv,'.r',markersize=1,picker=2)[0])
+      self.UVPlotPlot2.append(self.UVPlot.plot(toplotu, toplotv,'.r',markersize=1,picker=True)[0])
+      self.UVPlotPlot2.append(self.UVPlot.plot(-toplotu,-toplotv,'.r',markersize=1,picker=True)[0])
+      
+    self.UVPlot.xaxis.set_pickradius(2.)
+    self.UVPlot.yaxis.set_pickradius(2.)
+
     self.UVPlot.set_xlim((2.*self.Xmax/self.wavelength[2]/self.lfac,-2.*self.Xmax/self.wavelength[2]/self.lfac))
     self.UVPlot.set_ylim((2.*self.Xmax/self.wavelength[2]/self.lfac,-2.*self.Xmax/self.wavelength[2]/self.lfac))
     self.curzoom[2] = (2.*self.Xmax/self.lfac,-2.*self.Xmax/self.lfac,2.*self.Xmax/self.lfac,-2.*self.Xmax/self.lfac)
@@ -1427,7 +1438,7 @@ class Interferometer(object):
 
   def _plotBeam(self,redo=True):
 
-    Np4 = self.Npix/4
+    Np4 = self.Npix//4
     if redo:
       self.beamPlot.cla()
       self.beamPlotPlot = self.beamPlot.imshow(self.beam[Np4:self.Npix-Np4,Np4:self.Npix-Np4],picker=True,interpolation='nearest', cmap=self.currcmap)
@@ -1453,12 +1464,12 @@ class Interferometer(object):
       warn = 'WARNING!\nToo short baselines for such a small image\nPLEASE, INCREASE THE IMAGE SIZE!\nAND/OR DECREASE THE WAVELENGTH'
       self.beamText.set_text(warn)
 
-    self.spherePlot.view_init(elev=self.dec/self.deg2rad,azim=0)
+  #  self.spherePlot.view_init(elev=self.dec/self.deg2rad,azim=0)
     self.arrayPath[0][:] = 10.*self.H[1]*np.cos(self.lat)
     self.arrayPath[1][:] = 10.*self.H[0]*np.cos(self.lat)
     self.arrayPath[2][:] = 10.*np.sin(self.lat)
-    self.sphereArray[0].set_data(self.arrayPath[0], self.arrayPath[1])
-    self.sphereArray[0].set_3d_properties(self.arrayPath[2])
+ #   self.sphereArray[0].set_data(self.arrayPath[0], self.arrayPath[1])
+ #   self.sphereArray[0].set_3d_properties(self.arrayPath[2])
 
 
 
@@ -1595,31 +1606,31 @@ class Interferometer(object):
 
 
 # Drag the sphere plot (to change source position)
-     if self._onSphere:
-       oldDec = self.dec/self.deg2rad
-       newDec, newH0 = self.spherePlot.elev, self.spherePlot.azim
+  #   if self._onSphere:
+  #     oldDec = self.dec/self.deg2rad
+  #     newDec, newH0 = self.spherePlot.elev, self.spherePlot.azim
 
    # Limits on declination:
-       if np.abs(newDec)>90.:
-         self.spherePlot.view_init(elev = oldDec, azim=0.0)
-         return
+    #   if np.abs(newDec)>90.:
+    #     self.spherePlot.view_init(elev = oldDec, azim=0.0)
+    #     return
 
-       newDec *= self.deg2rad
-       if not self.lock:
-         self.lock=True
-         if newDec != self.dec and np.abs(newDec-self.lat)<np.pi/2.:
-           self.widget['dec'].set_val(newDec/self.deg2rad)
-           self.spherePlot.view_init(elev = newDec/self.deg2rad, azim=0.0)
-           self.dec = newDec
-           self._changeCoordinates()
-           self.lock = False
-         else:
-           self.spherePlot.view_init(elev = oldDec, azim=0.0)
-           self.lock = False
-       else:
-           self.spherePlot.view_init(elev = oldDec, azim=0.0)
+    #   newDec *= self.deg2rad
+    #   if not self.lock:
+    #     self.lock=True
+    #     if newDec != self.dec and np.abs(newDec-self.lat)<np.pi/2.:
+    #       self.widget['dec'].set_val(newDec/self.deg2rad)
+    #     #  self.spherePlot.view_init(elev = newDec/self.deg2rad, azim=0.0)
+    #       self.dec = newDec
+    #       self._changeCoordinates()
+    #       self.lock = False
+    #     else:
+    #     #  self.spherePlot.view_init(elev = oldDec, azim=0.0)
+    #       self.lock = False
+    # #  else:
+    # #      self.spherePlot.view_init(elev = oldDec, azim=0.0)
 
-
+    #   self.canvas.draw()
 
 
 
@@ -1809,8 +1820,8 @@ class Interferometer(object):
 
   def _onPress(self,event):
 
-    if event.inaxes == self.spherePlot:
-      self._onSphere = True
+  #  if event.inaxes == self.spherePlot:
+  #    self._onSphere = True
 
 
     if not hasattr(event,'dblclick'):
@@ -1918,17 +1929,17 @@ class Interferometer(object):
     fname = tkFileDialog.asksaveasfilename(defaultextension='.array',title='Save current array...')
     iff = open(fname,'w')
 
-    print >> iff,'LATITUDE % 3.1f'%(self.lat/self.deg2rad)
-    print >> iff,'DECLINATION % 3.1f'%(self.dec/self.deg2rad)
+    print('LATITUDE % 3.1f'%(self.lat/self.deg2rad), file=iff)
+    print('DECLINATION % 3.1f'%(self.dec/self.deg2rad), file=iff)
     toprint = tuple([l/self.Hfac for l in self.Hcov])
-    print >> iff,'HOUR_ANGLE % 3.1f  % 3.1f'%toprint
+    print('HOUR_ANGLE % 3.1f  % 3.1f'%toprint, file=iff)
 
     if self.Diameters[0] != 0.0 or self.Diameters[1] != 0.0:
-      print >> iff,'DIAMETER % 3.1f  % 3.1f'%tuple(self.Diameters)
+      print('DIAMETER % 3.1f  % 3.1f'%tuple(self.Diameters), file=iff)
 
     for ant in self.antPos:
       toprint = tuple([p*1.e3 for p in ant])
-      print >> iff,'ANTENNA  % .3e   % .3e'%toprint
+      print('ANTENNA  % .3e   % .3e'%toprint, file=iff)
 
     self.antText.set_text('SAVED: %s'%os.path.basename(fname))
     pl.draw()
@@ -2044,15 +2055,15 @@ class CLEANer(object):
 
     self.me.config(menu=menubar)
     self.me.protocol("WM_DELETE_WINDOW", self.quit)
-    self.Np4 = self.parent.Npix/4
+    self.Np4 = self.parent.Npix//4
 
     self.figCL1 = pl.figure(figsize=(12,6))    
   #  self.figCL2 = pl.figure(figsize=(6,6))    
 
     self.ResidPlot = self.figCL1.add_subplot(121,aspect='equal') #pl.axes([0.01,0.43,0.5,0.5],aspect='equal')
     self.CLEANPlot = self.figCL1.add_subplot(122,aspect='equal',sharex=self.ResidPlot,sharey=self.ResidPlot) #pl.axes([0.55,0.43,0.5,0.5],aspect='equal')
-    self.ResidPlot.set_adjustable('box-forced')
-    self.CLEANPlot.set_adjustable('box-forced')
+    self.ResidPlot.set_adjustable('box')
+    self.CLEANPlot.set_adjustable('box')
 
     self.frames = {}
     self.frames['FigFr'] = Tk.Frame(self.me)
@@ -2061,7 +2072,7 @@ class CLEANer(object):
     self.canvas1 = FigureCanvasTkAgg(self.figCL1, master=self.frames['FigFr'])
   #  self.canvas2 = FigureCanvasTkAgg(self.figCL2, master=self.frames['FigFr'])
 
-    self.canvas1.show()
+    self.canvas1.draw()
   #  self.canvas2.show()
 
     self.frames['FigFr'].pack(side=Tk.TOP)
@@ -2357,8 +2368,8 @@ class CLEANer(object):
       Dec = event.ydata
       y1 = np.floor((self.Xaxmax-RA)/(2.*self.Xaxmax)*self.parent.Npix)
       x1 = np.floor((self.Xaxmax-Dec)/(2.*self.Xaxmax)*self.parent.Npix)
-      xi,xf = map(int,[min(self.xy0[0],x1),max(self.xy0[0],x1)])
-      yi,yf = map(int,[min(self.xy0[1],y1),max(self.xy0[1],y1)])
+      xi,xf = list(map(int,[min(self.xy0[0],x1),max(self.xy0[0],x1)]))
+      yi,yf = list(map(int,[min(self.xy0[1],y1),max(self.xy0[1],y1)]))
       if self.pressed==1:
         self.mask[xi:xf,yi:yf] = 1.0
         self.bmask[xi:xf,yi:yf] = True
@@ -2369,7 +2380,7 @@ class CLEANer(object):
       for coll in self.MaskPlot.collections:
          self.ResidPlot.collections.remove(coll)
 
-      self.MaskPlot = self.ResidPlot.contour(np.linspace(self.parent.Xaxmax/2.,-self.parent.Xaxmax/2.,self.parent.Npix/2),np.linspace(self.parent.Xaxmax/2.,-self.parent.Xaxmax/2.,self.parent.Npix/2),self.mask[self.Np4:self.parent.Npix-self.Np4,self.Np4:self.parent.Npix-self.Np4],levels=[0.5])
+      self.MaskPlot = self.ResidPlot.contour(np.linspace(self.parent.Xaxmax/2.,-self.parent.Xaxmax/2.,int(self.parent.Npix/2)),np.linspace(self.parent.Xaxmax/2.,-self.parent.Xaxmax/2.,int(self.parent.Npix/2)),self.mask[int(self.Np4):int(self.parent.Npix-self.Np4),int(self.Np4):int(self.parent.Npix-self.Np4)],levels=[0.5])
 
    #   self.ResidPlot.set_xlim((self.parent.Xaxmax/2.,-self.parent.Xaxmax/2.))
    #   self.ResidPlot.set_ylim((-self.parent.Xaxmax/2.,self.parent.Xaxmax/2.))
@@ -2462,7 +2473,7 @@ class CLEANer(object):
     self.ResidPlot.set_xlabel('RA offset (as)')
     self.ResidPlot.set_title('RESIDUALS')
 
-    self.MaskPlot = self.ResidPlot.contour(np.linspace(self.parent.Xaxmax/2.,-self.parent.Xaxmax/2.,self.parent.Npix/2),np.linspace(self.parent.Xaxmax/2.,-self.parent.Xaxmax/2.,self.parent.Npix/2),self.mask[self.Np4:self.parent.Npix-self.Np4,self.Np4:self.parent.Npix-self.Np4],levels=[0.5])
+    self.MaskPlot = self.ResidPlot.contour(np.linspace(self.parent.Xaxmax/2.,-self.parent.Xaxmax/2.,int(self.parent.Npix/2)),np.linspace(self.parent.Xaxmax/2.,-self.parent.Xaxmax/2.,int(self.parent.Npix/2)),self.mask[int(self.Np4):int(self.parent.Npix-self.Np4),int(self.Np4):int(self.parent.Npix-self.Np4)],levels=[0.5])
   #  pl.setp(self.MaskPlot, extent=(self.parent.Xaxmax/2.,-self.parent.Xaxmax/2.,-self.parent.Xaxmax/2.,self.parent.Xaxmax/2.))
 
   #  self.ResidPlot.set_xlim((self.parent.Xaxmax/2.,-self.parent.Xaxmax/2.))
@@ -2586,11 +2597,11 @@ class CLEANer(object):
        rslice = self.residuals[self.Np4:self.parent.Npix-self.Np4,self.Np4:self.parent.Npix-self.Np4]
        peakpos = np.unravel_index(np.argmax(tempres),np.shape(self.residuals))
        peakval = self.residuals[peakpos[0],peakpos[1]]
-       self.residuals -= gain*peakval*np.roll(np.roll(psf,peakpos[0]-self.parent.Npix/2,axis=0), peakpos[1]-self.parent.Npix/2,axis=1)
+       self.residuals -= gain*peakval*np.roll(np.roll(psf,int(peakpos[0]-self.parent.Npix/2),axis=0), int(peakpos[1]-self.parent.Npix/2),axis=1)
        tempres[goods] = self.residuals[goods]
        # MODIFY CLEAN MODEL!!
        self.cleanmodd[peakpos[0],peakpos[1]] += gain*peakval
-       self.cleanmod += gain*peakval*np.roll(np.roll(self.cleanBeam,peakpos[0]-self.parent.Npix/2,axis=0), peakpos[1]-self.parent.Npix/2,axis=1)
+       self.cleanmod += gain*peakval*np.roll(np.roll(self.cleanBeam,int(peakpos[0]-self.parent.Npix/2),axis=0), int(peakpos[1]-self.parent.Npix/2),axis=1)
        self.ResidPlotPlot.set_array(rslice)
 
        self.CLEANPEAK = np.max(self.cleanmod)
@@ -2691,7 +2702,7 @@ class CLEANer(object):
 
     self.canvasCS1 = FigureCanvasTkAgg(self.figCS1, master=self.frames['FigCS'])
 
-    self.canvasCS1.show()
+    self.canvasCS1.draw()
     self.frames['FigCS'].pack(side=Tk.TOP)
     self.frames['CSFr'].pack(side=Tk.TOP)
 
@@ -2701,7 +2712,7 @@ class CLEANer(object):
     self.canvasCS1.mpl_connect('pick_event', self._onCSPick)
     self.canvasCS1.get_tk_widget().pack(side=Tk.LEFT) #, fill=Tk.BOTH, expand=1)
     toolbar_frame = Tk.Frame(self.convSource)
-    toolbar = NavigationToolbar2TkAgg(self.canvasCS1, toolbar_frame)
+    toolbar = NavigationToolbar2Tk(self.canvasCS1, toolbar_frame)
     toolbar_frame.pack(side=Tk.LEFT)
 
     self._CSRead()
@@ -2815,7 +2826,7 @@ class UVPLOTTER2(object):
 
     self.canvasUV1 = FigureCanvasTkAgg(self.figUV1, master=self.frames['FigUV'])
 
-    self.canvasUV1.show()
+    self.canvasUV1.draw()
     self.frames['FigUV'].pack(side=Tk.TOP)
     self.frames['BFr'].pack(side=Tk.TOP)
 
@@ -2826,7 +2837,7 @@ class UVPLOTTER2(object):
     self.canvasUV1.mpl_connect('pick_event', self._onUVPick)
     self.canvasUV1.get_tk_widget().pack(side=Tk.LEFT)
     toolbar_frame = Tk.Frame(self.FFTwin)
-    toolbar = NavigationToolbar2TkAgg(self.canvasUV1, toolbar_frame)
+    toolbar = NavigationToolbar2Tk(self.canvasUV1, toolbar_frame)
     toolbar_frame.pack(side=Tk.LEFT)
 
     self._FFTRead()
@@ -2996,7 +3007,7 @@ class UVPLOTTER(object):
 
     self.canvasUV1 = FigureCanvasTkAgg(self.figUV1, master=self.frames['FigUV'])
 
-    self.canvasUV1.show()
+    self.canvasUV1.draw()
     self.frames['FigUV'].pack(side=Tk.TOP)
     self.frames['BFr'].pack(side=Tk.TOP)
 
@@ -3007,7 +3018,7 @@ class UVPLOTTER(object):
     self.canvasUV1.mpl_connect('pick_event', self._onUVPick)
     self.canvasUV1.get_tk_widget().pack(side=Tk.LEFT) #, fill=Tk.BOTH, expand=1)
     toolbar_frame = Tk.Frame(self.FFTwin)
-    toolbar = NavigationToolbar2TkAgg(self.canvasUV1, toolbar_frame)
+    toolbar = NavigationToolbar2Tk(self.canvasUV1, toolbar_frame)
     toolbar_frame.pack(side=Tk.LEFT)
 
     self._FFTRead()
@@ -3149,6 +3160,10 @@ if __name__ == "__main__":
   TITLE = 'Aperture Synthesis Simulator (I. Marti-Vidal, Onsala Space Observatory) - version  %s'%__version__
   root.wm_title(TITLE)
 
+  root.attributes('-zoomed',True)
+  m = list(root.maxsize())
+  m[1]-=100
+  root.geometry('{}x{}+0+0'.format(*m))
 
   myint = Interferometer(tkroot=root)
   Tk.mainloop()
