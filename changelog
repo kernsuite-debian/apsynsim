@@ -1,3 +1,11 @@
+v 2.2b - SEP 2022.
+- Corrected bugs related to Python 3 and MPL deprecations.
+- Updated documentation.
+
+v 2.1b - MAY 2022.
+- Fully translated to Python 3 (but had to remove mplot3d).
+- Added APSYNTRUE (with Python 3) with several VLBI real test data.
+
 v 2.0b - DEC 2020.
 
 - Added a new program (APSYNTRU) which handles REAL data. Deconvolution can be done with CLEAN or MEM.
