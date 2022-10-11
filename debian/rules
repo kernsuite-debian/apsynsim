@@ -6,7 +6,11 @@ export DH_VERBOSE=1
 
 override_dh_fixperms:
 	dh_fixperms
-	chmod 755 debian/apsynsim/usr/share/apsynsim/SCRIPT/APSYNSIM_Python3.py
+	sed  -i '1i #!/usr/bin/python3' debian/apsynsim/usr/share/apsynsim/SCRIPT/APSYNSIM.py
+	chmod 755 debian/apsynsim/usr/share/apsynsim/SCRIPT/APSYNSIM.py
 
-override_dh_python3:
-	dh_python3 --shebang=/usr/bin/python3
+
+override_dh_installdocs:
+	mkdir debian/apsynsim/usr/share/doc
+	mkdir debian/apsynsim/usr/share/doc/apsynsim/
+	cp *.pdf debian/apsynsim/usr/share/doc/apsynsim/

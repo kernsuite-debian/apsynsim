@@ -1,3 +1,10 @@
+apsynsim (2.2b-1kern1) focal; urgency=medium
+
+  [ Athanaseus Javas Ramaila ]
+  * New upstream version 2.2b
+
+ -- KERN packaging <packaging@kernsuite.info>  Sat, 08 Oct 2022 18:58:25 +0000
+
 apsynsim (2.0b-1kern2) focal; urgency=medium
 
   [ Athanaseus Javas Ramaila ]
