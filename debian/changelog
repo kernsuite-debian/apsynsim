@@ -1,3 +1,11 @@
+apsynsim (2.5b-1kern1) jammy; urgency=medium
+
+  [ Athanaseus Javas Ramaila ]
+  * New upstream version 2.5b
+  * Build for jammy
+
+ -- KERN packaging <packaging@kernsuite.info>  Sun, 07 Apr 2024 18:37:50 +0000
+
 apsynsim (2.2b-1kern1) focal; urgency=medium
 
   [ Athanaseus Javas Ramaila ]
