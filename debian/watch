@@ -1,3 +1,4 @@
 version=4
 opts=pgpsigurlmangle=s/$/.asc/ \
-  https://launchpad.net/apsynsim/trunk/uveg-2024/+download/apsynsim_v([.\d]+)\.tar\.gz
+  https://launchpad.net/apsynsim/ \ 
+  https://launchpad.net/.*download/apsynsim-([.\d]+)\.tar\.xz
