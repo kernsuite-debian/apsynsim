@@ -1,0 +1,42 @@
+diff --git a/APSYNTRUE/SCRIPT/APSYNTRUE.py b/APSYNTRUE/SCRIPT/APSYNTRUE.py
+index 7433eb3..b3ae8d6 100644
+--- a/APSYNTRUE/SCRIPT/APSYNTRUE.py
++++ b/APSYNTRUE/SCRIPT/APSYNTRUE.py
+@@ -178,11 +178,20 @@ class dataTool(object):
+ 
+     self.__version__ = __version__
+ 
++# Overwrite defaults from config file:
++    d1 = os.path.dirname(os.path.realpath(sys.argv[0]))
++  #  print d1
++
++    try:
++      conf = open(os.path.join(d1,'APSYNTRUE.config'))
++    except:
++      d1 = os.getcwd()
++      conf = open(os.path.join(d1,'APSYNTRUE.config'))
+ 
+ #############
+ ## World map:
+     GREENW = -512; MAXLAT = [-85.,85.]
+-    MAP = 'WORLD_MAP_SM.png' ; FS = 32
++    MAP =  os.path.join(d1,'..','SCRIPT/') + 'WORLD_MAP_SM.png' ; FS = 32
+ 
+     World = np.copy(np.roll(np.asarray(Image.open(MAP))[::-1,:,0],GREENW,axis=1).astype(float))
+     World = np.max(World)-World
+@@ -249,15 +258,6 @@ class dataTool(object):
+ 
+ 
+ 
+-# Overwrite defaults from config file:
+-    d1 = os.path.dirname(os.path.realpath(sys.argv[0]))
+-  #  print d1
+-
+-    try:
+-      conf = open(os.path.join(d1,'APSYNTRUE.config'))
+-    except:
+-      d1 = os.getcwd()
+-      conf = open(os.path.join(d1,'APSYNTRUE.config'))
+       
+     for line in conf.readlines():
+       temp=line.replace(' ','')
