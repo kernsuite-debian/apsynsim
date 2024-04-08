@@ -1,3 +1,10 @@
+apsynsim (2.5b-3kern2) jammy; urgency=medium
+
+  [ Athanaseus Javas Ramaila ]
+  * Metadata
+
+ -- KERN packaging <packaging@kernsuite.info>  Mon, 08 Apr 2024 18:13:01 +0000
+
 apsynsim (2.5b-2kern2) jammy; urgency=medium
 
   [ Athanaseus Javas Ramaila ] 
