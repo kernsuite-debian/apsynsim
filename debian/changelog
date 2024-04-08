@@ -1,8 +1,14 @@
+apsynsim (2.5b-2kern2) jammy; urgency=medium
+
+  [ Athanaseus Javas Ramaila ] 
+  * Link APSYMTRUE executable
+
+ -- KERN packaging <packaging@kernsuite.info>  Mon, 08 Apr 2024 11:49:40 +0000
+
 apsynsim (2.5b-2kern1) jammy; urgency=medium
 
   [ Athanaseus Javas Ramaila ]
   * Add patch to allow saving in current working dir
-  * Link APSYMTRUE executable
 
  -- KERN packaging <packaging@kernsuite.info>  Mon, 08 Apr 2024 08:22:20 +0000
 
