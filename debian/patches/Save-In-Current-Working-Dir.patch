@@ -1,0 +1,28 @@
+diff --git a/APSYNSIM/SCRIPT/APSYNSIM.py b/APSYNSIM/SCRIPT/APSYNSIM.py
+index fa64164..45be3af 100644
+--- a/APSYNSIM/SCRIPT/APSYNSIM.py
++++ b/APSYNSIM/SCRIPT/APSYNSIM.py
+@@ -266,7 +266,8 @@ class Interferometer(object):
+     self.datadir = os.path.join(d1,'..','PICTURES')
+     self.arraydir  = os.path.join(d1,'..','ARRAYS')
+     self.modeldir  = os.path.join(d1,'..','SOURCE_MODELS')
+-    self.userdir  = os.path.join(d1,'..','SAVED_IMAGES')
++    #self.userdir  = os.path.join(d1,'..','SAVED_IMAGES')
++    self.userdir  = '.' # Current working directory
+ 
+  # Try to read a default initial array:
+     if len(antenna_file)==0:
+diff --git a/APSYNTRUE/SCRIPT/APSYNTRUE.py b/APSYNTRUE/SCRIPT/APSYNTRUE.py
+index 7433eb3..42e9253 100644
+--- a/APSYNTRUE/SCRIPT/APSYNTRUE.py
++++ b/APSYNTRUE/SCRIPT/APSYNTRUE.py
+@@ -274,7 +274,8 @@ class dataTool(object):
+ # Set instance configuration values:
+     self.Npix = Npix
+     self.datadir = os.path.join(d1,'..','DATA')
+-    self.userdir  = os.path.join(d1,'..','SAVED_IMAGES')
++    #self.userdir  = os.path.join(d1,'..','SAVED_IMAGES')
++    self.userdir  = '.' # Current working directory
+     self.MemoryHungry = MemoryHungry
+ 
+ 
