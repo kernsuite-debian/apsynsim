@@ -1,2 +1,4 @@
 version=4
-https://launchpad.net/apsynsim/+download /.+/apsynsim_v?([\d\.]+)\.tar\.gz
+opts="filenamemangle=s/.*\/apsynsim_v?([\d\.]+)\.tar\.gz/apsynsim-$1.tar.gz/" \
+  https://launchpad.net/apsynsim/+download \
+  https://launchpad.net/apsynsim/.*/\+file/apsynsim_v?([\d\.]+)\.tar\.gz
