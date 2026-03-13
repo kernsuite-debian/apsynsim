@@ -1,3 +1,10 @@
+apsynsim (2.5b-3kern3) noble; urgency=medium
+
+  [ Athanaseus Javas Ramaila ]
+  * Build for noble
+
+ -- KERN packaging <packaging@kernsuite.info>  Fri, 13 Mar 2026 11:59:46 +0200
+
 apsynsim (2.5b-3kern2) jammy; urgency=medium
 
   [ Athanaseus Javas Ramaila ]
