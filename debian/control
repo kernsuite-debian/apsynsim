@@ -13,20 +13,20 @@ Build-Depends: debhelper-compat (= 13),
                python3-tk
 Standards-Version: 4.6.2.0
 Homepage: https://launchpad.net/apsynsim
-XS-Python3-Version: 3.10
+XS-Python3-Version: 3.12
 
 Package: apsynsim
 Architecture: any
 Multi-Arch: foreign
 Depends: ${misc:Depends}, ${shlibs:Depends}, ${python3:Depends},
          python3-matplotlib, python3-tk, python3-scipy, python3-numpy,
-         python3-astropy, python3-mpltoolkits.basemap
+         python3-astropy
 Description: Aperture Synthesis Simulator for Radio Astronomy
 
 Package: apsyntrue
 Architecture: any
 Multi-Arch: foreign
 Depends: ${misc:Depends}, ${shlibs:Depends}, ${python3:Depends},
-         python3-astropy, python3-cartopy, python3-mpltoolkits.basemap,
+         python3-astropy, python3-cartopy,
          python3-matplotlib, python3-tk, python3-scipy, python3-numpy
 Description: Aperture Synthesis Tool for imaging real Radio Interferometry data
